@@ -1,0 +1,11 @@
+재부팅 후 /etc/fstab파일 의 스왑 항목을 주석 처리 (줄 앞에 # 추가)하여 스왑을 비활성화 할 수 있습니다 . 재부팅 후 스왑 파티션이 자동으로 마운트되는 것을 방지합니다. 단일 명령으로이를 수행하려면 다음을 수행하십시오.
+
+sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+또는 간단히 :
+
+sudo sed -i '/ swap / s/^/#/' /etc/fstab
+이제의 스왑 항목 /etc/fstab은 다음과 유사합니다.
+
+#UUID=xxxxxxxx-xxxx-xxxxx-xxx-xxxxxxxxxxx none            swap    sw              0       0
+

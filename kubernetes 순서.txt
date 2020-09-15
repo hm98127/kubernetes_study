@@ -1,0 +1,44 @@
+https://medium.com/finda-tech/overview-8d169b2a54ff
+
+ 1. docker 설치
+
+2. kubernetes 설치 
+
+~ vi install.sh 
+
+sudo apt-get update && sudo apt-get install -y apt-transport-https curl
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+cat <<EOF | sudo tee /etc/apt/sources.list.d/kubernetes.list
+deb https://apt.kubernetes.io/ kubernetes-xenial main
+EOF
+sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+
+넣고 
+
+bash install.sh
+설치 
+
+3. 스왑 해제
+ 
+swapoff -a 
+sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+4. kubeadm 클러스터 생성, 참가 
+(root 권한) 
+master: kubeadm init 
+          mkdir -p $HOME/.kube
+          sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+          sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+worker1: kubeadm join 192.168.51.150:6443 --token d4unkb.qr22hjbqsq027u5r \   
+--discovery-token-ca-cert-hash sha256:b5922717ae61e35404aab8757746b96d2b0c2d31a158c34dbba067fbd84f527e
+
+worker2: 위와 동등
+
+kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+
+
+클러스터 완성 
+

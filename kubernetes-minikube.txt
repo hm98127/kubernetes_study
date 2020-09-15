@@ -1,0 +1,470 @@
+kubeadm join 192.168.51.155:6443 --token l1qxwb.3v164m8rvwflmk8k \
+    --discovery-token-ca-cert-hash sha256:2aedfa2b5112744a819e0932bf7db20f578065bfe9daf0d91a9c334a25ec333d
+
+
+
+- 설치
+
+1 단계 : 시스템 업데이트 및 필수 패키지 설치
+	소프트웨어를 설치하기 전에 작업중인 시스템을 업데이트하고 업그레이드해야합니다.
+	이렇게하려면 다음 명령을 실행하십시오.
+
+	sudo apt-get update -y
+	sudo apt-get upgrade -y
+
+	또한 다음 필수 패키지를 설치 (또는 이미 가지고 있는지 확인)하십시오.
+
+	sudo apt-get install curl
+	sudo apt-get install apt-transport-https
+	
+	아래 이미지에서 출력은 패키지가 이미 설치되었음을 알려줍니다.
+
+
+2 단계 : VirtualBox Hypervisor 설치
+	위에서 언급했듯이 Minikube로 단일 노드 클러스터를 설정할 수있는 가상 머신이 필요합니다. 
+	기본 설정에 따라 VirtualBox 또는 KVM을 사용할 수 있습니다.
+
+	이 가이드는 VirtualBox로 Minikube를 설치하는 방법을 보여줍니다.
+
+	1. Ubuntu에 VirtualBox 를 설치하려면 다음 명령을 실행합니다.
+
+	sudo apt install virtualbox virtualbox-ext-pack
+
+	2.로 설치를 확인하고 Enter를y 누르 십시오 .
+
+	3. 다음으로 라이센스 계약이 화면에 나타납니다. 계속하려면 Tab 을 누른 다음 Enter 를 누르 십시오.
+
+	4. 설치 프로그램은 Yes 를 선택하여 VirtualBox PUEL 라이센스 조건에 동의하도록 요청합니다 .
+
+	5. 설치가 완료 될 때까지 기다린 후 다음 단계로 이동합니다.
+
+3 단계 : Minikube 설치
+	VirtualBox를 설정 한 후 Ubuntu 시스템에 Minikube를 설치하십시오.
+
+	1. 먼저 다음 wget명령을 사용하여 최신 Minikube 바이너리를 다운로드합니다 .
+
+	wget https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+
+	2. 다운로드 한 파일을 복사하고 다음을 사용하여 / usr / local / bin / minikube 디렉토리에 저장합니다.
+
+	sudo cp minikube-linux-amd64 /usr/local/bin/minikube
+	명령이 올바르게 실행 된 경우 출력이 없습니다.
+
+	3. 다음으로 chmod 명령을 사용하여 파일 실행 권한을 부여합니다 .
+
+	sudo chmod 755 /usr/local/bin/minikube
+	다시 말하지만 출력이 없습니다.
+
+	4. 마지막으로 소프트웨어 버전을 확인하여 Minikube를 성공적으로 설치했는지 확인합니다.
+
+	minikube version
+	출력에는 아래 이미지와 같이 소프트웨어의 버전 번호가 표시되어야합니다.
+
+4 단계 : Kubectl 설치
+	클러스터를 배포하고 관리하려면 Kubernetes 용 공식 명령 줄 도구 인 kubectl 을 설치해야합니다 .
+
+	1. 다음 명령으로 kubectl을 다운로드합니다.
+
+	curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl  \
+	-s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+
+	curl -LO "https://storage.googleapis.com/kubernetes-release/release/ \
+	$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+
+	특정 버전을 다운로드하려면, $(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt) 명령 부분을 특정 버전으로 바꾼다.
+	예를 들어, 리눅스에서 버전 v1.19.0을 다운로드하려면, 다음을 입력한다.
+	curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.19.0/bin/linux/amd64/kubectl
+
+
+
+	2. 다음을 입력하여 바이너리를 실행 가능하게 만듭니다.
+
+	chmod +x ./kubectl
+
+	3. 그런 다음 다음 명령을 사용하여 바이너리를 경로로 이동합니다.
+
+	sudo mv ./kubectl /usr/local/bin/kubectl
+
+	4. kubectl 인스턴스의 버전을 확인하여 설치를 확인합니다.
+
+	kubectl version -o json
+
+5 단계 : Minikube 시작
+	필요한 모든 소프트웨어를 설정했으면 Minikube를 시작할 준비가 된 것입니다.
+
+	다음 명령을 실행하십시오.
+
+	minikube start
+	먼저 시스템은 온라인 소스와 localkube 바이너리에서 Minikube ISO 파일을 다운로드합니다. 
+	그런 다음 VirtualBox에 가상 머신을 생성하여 단일 노드 클러스터를 시작하고 구성합니다.
+
+	Minikube로 Kubernetes 관리
+	일반적인 Minikube 명령
+	kubectl 구성을 보려면 다음 명령어를 사용하세요.
+
+	kubectl config view
+
+	클러스터 정보를 표시하려면 :
+
+	kubectl cluster-info
+
+	실행중인 노드를 확인하려면 다음 명령을 사용하십시오.
+
+	kubectl get nodes
+
+	실행 된 모든 Minikube 포드 목록을 보려면 다음을 수행하십시오.
+
+	kubectl get pod
+
+	Minikube VM에 SSH를 사용하려면 :
+
+	쉘을 종료하려면 다음을 실행하십시오.
+
+	exit
+
+	단일 노드 클러스터 유형 실행을 중지하려면 :
+
+	minikube stop
+
+	상태를 확인하려면 다음을 사용하십시오.
+
+	minikube status
+
+	minikube ssh
+
+	단일 노드 클러스터를 삭제하려면 :
+
+	minikube delete
+
+	설치된 Minikube 애드온 목록을 보려면 :
+	minikube addons list
+
+	Minikube 대시 보드에 액세스
+	Minikube는 기본적으로 대시 보드 애드온과 함께 제공됩니다. 
+	웹 대시 보드는  터미널에서 실제로 명령을 실행하지 않고도 Kubernetes 클러스터 를 관리하는 방법을 제공합니다 .
+
+	터미널을 통해 Minikube 대시 보드를 활성화하고 액세스하려면 다음 명령을 실행하십시오.
+
+	minikube dashboard
+
+	터미널을 종료하면 프로세스가 종료되고 Minikube 대시 보드가 종료됩니다.
+
+	또는 브라우저를 통해 직접 대시 보드에 액세스 할 수 있습니다.
+
+	이렇게하려면 대시 보드의 IP 주소를 획득하십시오.
+
+	minikube dashboard --url
+
+	대시 보드의 IP 주소를 검색하여 Minikube 대시 보드에 액세스하십시오.
+
+결론
+이 기사를 따르면 Ubuntu 18.04 또는 20.04에 Minikube를 성공적으로 설치하고 구성해야합니다. 
+이제 단일 Minikube 노드를 사용하여 로컬 머신에서 Kubernetes의 기술을 테스트하고 마스터 할 수 있습니다.
+
+
+
+
+------------------ kubeadm으로 쿠버네티스 설치 
+
+-------------------------------1. 설치 환경
+설치 환경은 다음과 같다.
+
+VirtualBox 5.0.14r
+Master Node : Ubuntu Desktop 18.04.1 64bit : 1대
+Worker Node : Ubuntu Server 18.04.1 64bit : 2대
+Kubernetes 1.12.3
+Network Plugin : calico or flannel or cilium 이용
+Dashboard Addon : Dashboard 이용
+kubeadm 1.12.3
+VM을 이용하여 Cluster 환경을 구축하는 경우 kubeadm을 이용하여 쉽게 Kubernetes를 설치 할 수 있다.
+Password
+Kubernetes 설치에 필요한 Password는 간편한 설치를 위해 root로 통일한다.
+모든 Node에서 root User로 설치를 진행한다.
+2. Node 설정
+
+[그림 1] Kubernetes 설치를 위한 Node 구성도
+
+VirtualBox를 이용하여 [그림 1]과 같이 가상의 Master, Worker Node (VM)을 생성한다.
+
+Hostname : Master Node - node1, Worker Node1 - node2, Worker Node2 - node3
+NAT : Virtual Box에서 제공하는 "NAT 네트워크" 이용하여 10.0.0.0/24 Network를 구축한다.
+Router : 공유기를 이용하여 192.168.0.0/24 Network를 구축한다. (NAT)
+2.1. Master Node
+network:
+    version: 2
+    ethernets:
+        enp0s3:
+            dhcp4: no
+            addresses: [10.0.0.10/24]
+            gateway4: 10.0.0.1
+            nameservers:
+                addresses: [8.8.8.8]
+        enp0s8:
+            dhcp4: no
+            addresses: [192.168.0.150/24]
+            nameservers:
+                addresses: [8.8.8.8]
+[파일 1] Master Node - /etc/netplan/50-cloud-init.yaml
+Master Node의 /etc/netplan/50-cloud-init.yaml 파일을 [파일 1]과 같이 설정한다.
+
+2.2. Worker Node
+network:
+    version: 2
+    ethernets:
+        enp0s3:
+            dhcp4: no
+            addresses: [10.0.0.20/24]
+            gateway4: 10.0.0.1
+            nameservers:
+                addresses: [8.8.8.8]
+[파일 2] Worker Node 01 - /etc/netplan/50-cloud-init.yaml
+Worker Node 01의 /etc/netplan/50-cloud-init.yaml 파일을 [파일 2]와 같이 설정한다.
+
+network:
+    version: 2
+    ethernets:
+        enp0s3:
+            dhcp4: no
+            addresses: [10.0.0.30/24]
+            gateway4: 10.0.0.1
+            nameservers:
+                addresses: [8.8.8.8]
+[파일 3] Worker Node 02 - /etc/netplan/50-cloud-init.yaml
+Worker Node 02의 /etc/netplan/50-cloud-init.yaml 파일을 [파일 3]과 같이 설정한다.
+
+---------------------------설치하기전 주의 사항 
+
+# 스왑 메모리 비활성화(중요!)
+Pod를 할당하고 제어하는 kubelet은 스왑 상황을 처리하도록 설계되지 않았음.
+이유는 kubernetes에서 가장 기본이 되는 Pod의 컨셉 자체가 필요한 리소스 만큼만 호스트 자원에서
+ 할당 받아 사용한다는 구조이기 때문이다.
+따라서 kubernetes 개발팀은 메모리 스왑을 고려하지 않고 설계했기 때문에 클러스터 노드로
+ 사용할 서버 머신들은 모두 스왑 메모리를 비활성화 해줘야 한다.
+스왑 메모리를 비활성화 하기 위해 아래 명령어를 사용한다.
+
+swapoff -a 와 sed -i '2s/^/#/' /etc/fstab
+
+# iptables 툴이 nftables 백엔드를 사용하지 않아야 함.
+nftables 백엔드는 현재 kubeadm 패키지와 호환되지 않는다.
+nftables 백엔드를 사용하면 방화벽 규칙이 중복되어 kube-proxy가 중단된다.
+
+# 마스터 노드에서는 6443, 2379~2380, 10250, 10251, 10252 포트가 사용되고 있지 않아야 한다.
+마스터 노드에서 필요한 필수 포트
+6443 포트 : Kubernetes API Server / Used By All
+2379~2380 포트 : etcd server client API / Used By kube-apiserver, etcd
+10250 포트 : Kubelet API / Used By Self, Control plane
+10251 포트 : kube-scheduler / Used By Self
+10252 포트 : kube-controller-manager / Used By Self
+
+# 워커 노드에서는 10250, 30000~32767 포트가 사용되고 있지 않아야 한다.
+워커 노드에서 필요한 필수 포트
+10250 포트 : Kubelet API / Used By Self, Control plane
+30000~32767 포트 : NodePort Services / Used By All
+
+# Kubernetes는 v1.6.0 부터는 기본적으로 CRI(Container Runtime Interface)를 사용하도록 해서 
+상관 없지만 그 하위 버전에서는 컨테이너 런타임이 설치 되어 있어야한다. (CRI-O, Containerd, Docker 등)
+
+# Kubernetes v1.14.0 부터 kubeadm은 잘 알려진 도메인 소켓 목록을 스캔하여 Linux 노드에서
+ 컨테이너 런타임을 자동으로 감지하려고 시도한다. 사용 가능하고 감지가 가능한 컨테이너 런타임 및 소켓 경로는 아래와 같다.
++-----------------+-----------------------------------+ 
+| 컨테이너 런타임  |               소켓 경로               | 
++-----------------+-----------------------------------+ 
+| Docker             | /var/run/docker.sock               | 
+| Containerd        | /run/containerd/containerd.sock | 
+| CRI-O              | /var/run/crio/crio.sock              | 
++-----------------+-----------------------------------+
+
+# Docker와 Containerd가 모두 감지되면 Docker가 우선한다.
+
+# 이외에 다른 두 개 이상의 컨테이너 런타임이 감지되면 kubeadm은 적절한 오류 메시지를 출력하고 종료된다
+
+
+
+--------------------------------Package 설치
+모든 Node에서 Kubernetes를 위한 Package를 설치한다.
+
+(All)# apt-get update
+(All)# apt-get install -y docker.io
+Docker를 설치한다.
+
+(All)# apt-get update && apt-get install -y apt-transport-https curl
+(All)# curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+(All)# echo deb http://apt.kubernetes.io/ kubernetes-xenial main > /etc/apt/sources.list.d/kubernetes.list
+(All)# apt-get update && apt-get install -y kubeadm=1.12.3-00 kubelet=1.12.3-00
+kubelet, kubeadm를 설치한다.
+
+4. Cluster 구축
+4.1. Master Node
+Cluster 구축을 위한 kubeadm 명령어의 옵션은 이용할 Network Plugin에 따라 달라진다. 
+따라서 Cluster 구축전 Calico, Flannel, Cilium 3개의 Network Plugin인 중에서 이용할 Network Plugin을 하나를 선택해야 한다. 
+선택한 Network Plugin 항목에 있는 명령어와 공통 항목 명령어를 실행하여 Cluster를 구축한다.
+
+4.1.1. Calico 기반 구축
+(Master)# swapoff -a
+(Master)# sed -i '/swap.img/s/^/#/' /etc/fstab
+(Master)# kubeadm init --apiserver-advertise-address=10.0.0.10 --pod-network-cidr=192.168.0.0/16  \
+--kubernetes-version=v1.12.0
+...
+kubeadm join 10.0.0.10:6443 --token x7tk20.4hp9x2x43g46ara5 --discovery-token-ca-cert-hash \
+sha256:cab2cc0a4912164f45f502ad31f5d038974cf98ed10a6064d6632a07097fad79
+kubeadm를 초기화 한다. –pod-network-cidr는 반드시 192.168.0.0/16으로 설정해야 한다. 
+Docker Version으로 인한 Error가 발생하면 kubeadm init 마지막에 '–ignore-preflight-errors=SystemVerification'를 붙인다.
+
+4.1.1. Flannel 기반 구축
+(Master)# swapoff -a
+(Master)# sed -i '/swap.img/s/^/#/' /etc/fstab
+(Master)# kubeadm init --apiserver-advertise-address=10.0.0.10 --pod-network-cidr=10.244.0.0/16 \
+--kubernetes-version=v1.12.0
+...
+kubeadm join 10.0.0.10:6443 --token x7tk20.4hp9x2x43g46ara5 --discovery-token-ca-cert-hash \
+sha256:cab2cc0a4912164f45f502ad31f5d038974cf98ed10a6064d6632a07097fad79
+kubeadm를 초기화 한다. –pod-network-cidr는 반드시 10.244.0.0/16으로 설정해야 한다.
+ Docker Version으로 인한 Error가 발생하면 kubeadm init 마지막에 '–ignore-preflight-errors=SystemVerification'를 붙인다.
+
+4.1.3. Cilium 기반 구축
+(Master)# swapoff -a
+(Master)# sed -i '/swap.img/s/^/#/' /etc/fstab
+(Master)# kubeadm init --apiserver-advertise-address=10.0.0.10 --pod-network-cidr=192.167.0.0/16 \
+--kubernetes-version=v1.12.0
+...
+kubeadm join 10.0.0.10:6443 --token x7tk20.4hp9x2x43g46ara5 --discovery-token-ca-cert-hash \
+sha256:cab2cc0a4912164f45f502ad31f5d038974cf98ed10a6064d6632a07097fad79
+kubeadm를 초기화 한다. –pod-network-cidr는 –pod-network-cidr와 중복만 되지 않으면 된다. 
+위에서는 –pod-network-cidr를 192.167.0.0/16으로 설정하였다. Docker Version으로 인한 Error가 발생하면
+ kubeadm init 마지막에 '–ignore-preflight-errors=SystemVerification'를 붙인다.
+
+4.1.4. 공통
+(Master)# mkdir -p $HOME/.kube
+(Master)# sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+(Master)# sudo chown $(id -u):$(id -g) $HOME/.kube/config
+kubectl config를 설정한다.
+
+(Master)# kubectl taint nodes --all node-role.kubernetes.io/master-
+Master Node에도 Pod이 생성될 수 있도록 설정한다.
+
+if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+    . /etc/bash_completion
+fi
+
+source <(kubectl completion bash)
+[파일 4] Master Node - ~/.bashrc
+kubectl autocomplete를 설정한다. ~/.bashrc에 [파일 4]의 내용을 추가한다.
+
+4.2. Worker Node
+(Worker)# swapoff -a
+(Worker)# sed -i.bak '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+(Worker)# kubeadm join 10.0.0.10:6443 --token 46i2fg.yoidccf4k485z74u --discovery-token-ca-cert-hash \
+sha256:cab2cc0a4912164f45f502ad31f5d038974cf98ed10a6064d6632a07097fad79
+Cluster를 구성한다. kubeadm init 결과로 나온 kubeadm join ~~ 명령어를 모든 Worker Node에서 수행한다.
+ Docker Version으로 인한 Error가 발생하면 kubeadm join 마지막에 '–ignore-preflight-errors=SystemVerification'를 붙인다.
+
+4.3. 검증
+(Master)# kubectl get nodes
+NAME    STATUS     ROLES    AGE   VERSION
+node1   NotReady   master   84s   v1.12.3
+node2   NotReady   <none>   31s   v1.12.3
+node3   NotReady   <none>   27s   v1.12.3
+Master Node에서 Cluster를 확인한다. 모든 Node가 List에서 보여야 한다. Network 설정이 안되어 있기 때문에 
+NotReady 상태로 유지된다. Network Plugin 설치후 Ready 상태를 확인 가능하다.
+
+5. Network Plugin 설치
+Cluster 구축시 선택했던 Network Plugin만 설치한다.
+
+5.1. Master Node
+5.1.1. Calico 설치
+(Master)# kubectl apply -f https://docs.projectcalico.org/v3.1/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml
+(Master)# kubectl apply \
+-f https://docs.projectcalico.org/v3.1/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml
+Calico를 설치한다.
+
+5.1.2. Flannel 설치
+(Master)# kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.10.0/Documentation/kube-flannel.yml
+Flannel를 설치한다.
+
+5.1.3. Cilium 설치
+(Master)# mount bpffs /sys/fs/bpf -t bpf
+(Master)# echo "bpffs                      /sys/fs/bpf             bpf     defaults 0 0" >> /etc/fstab
+bpffs mount 및 설정을 진행한다.
+
+(Master)# wget https://github.com/cilium/cilium/archive/v1.3.0.zip
+(Master)# unzip v1.3.0.zip
+(Master)# kubectl apply -f cilium-1.3.0/examples/kubernetes/addons/etcd/standalone-etcd.yaml
+Cilium Download 및 Cilium 구동을 위한 etcd를 설치한다.
+
+...
+      containers:
+        - image: docker.io/cilium/cilium:v1.3.0
+          imagePullPolicy: IfNotPresent
+          name: cilium-agent
+          command: ["cilium-agent"]
+          args:
+            - "--debug=$(CILIUM_DEBUG)"
+            - "--kvstore=etcd"
+            - "--kvstore-opt=etcd.config=/var/lib/etcd-config/etcd.config"
+            - "--disable-ipv4=$(DISABLE_IPV4)"
+            - "--prefilter-device=enp0s3"
+            - "--prefilter-mode=generic"
+...
+[파일 5] Master Node - cilium-1.3.0/examples/kubernetes/1.12/cilium.yaml
+Cilium 설정을 변경하여 Prefilter 기능을 활성화 한다. prefilter Interface는 Kubernets Cluster Network를 구성하는 NIC의 Interface를 지정해야한다. Kubernets Cluster Network를 구성하는 NIC의 Device Driver가 XDP를 지원하지 않으면 –prefilter-mode에 generic 설정을 추가해야 한다. cilium-1.3.0/examples/kubernetes/1.12/cilium.yaml 파일을 [파일 5]와 같이 변경한다.
+
+(Master)# kubectl apply -f cilium-1.3.0/examples/kubernetes/1.12/cilium.yaml
+Cilium을 설치한다.
+
+5.2. Worker Node
+5.1.1. Calico, Flannel 설치
+Worker Node에서는 작업이 필요없다.
+
+5.2.2. Cilium 설치
+(Worker)# mount bpffs /sys/fs/bpf -t bpf
+(Worker)# echo "bpffs                      /sys/fs/bpf             bpf     defaults 0 0" >> /etc/fstab
+bpffs mount 및 설정을 진행한다.
+
+6. Web UI (Dashboard) 설치
+6.1 Master Node
+(Master)# kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
+Web UI 설치를 진행한다.
+
+...
+spec:
+  containers:
+  - command:
+...
+    - --insecure-bind-address=0.0.0.0
+    - --insecure-port=8080
+...
+[파일 6] Master Node - /etc/kubernetes/manifests/kube-apiserver.yaml
+kube-apiserver에 Insecure Option을 설정한다. /etc/kubernetes/manifests/kube-apiserver.yaml 파일의 command에 [파일 6]의 내용으로 수정한다.
+
+(Master)# service kubelet restart
+kubelet Service를 재시작한다.
+
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: kubernetes-dashboard
+  labels:
+    k8s-app: kubernetes-dashboard
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: kubernetes-dashboard
+  namespace: kube-system
+[파일 7] Master Node - ~/dashboard-admin.yaml
+Web UI Privilege 권한을 위한 config 파일을 생성한다. [파일 7]의 내용으로 ~/dashboard-admin.yaml 파일을 생성한다.
+
+(Master)# kubectl create -f ~/dashboard-admin.yaml
+(Master)# rm ~/dashboard-admin.yaml
+Web UI에 Privilege 권한을 적용하고 접속하여 확인한다. Web UI 접속후 Skip을 누른다.
+
+http://192.168.0.150:8080/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/login
+8. 참조
+Kubernetes 설치 : https://kubernetes.io/docs/setup/independent/install-kubeadm/
+Docker 설치 : https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/
+Calio, Flannel, Cilium 설치 : https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/#pod-network
+Web UI 설치 : https://github.com/kubernetes/dashboard/wiki/Access-control#basic
+
+
